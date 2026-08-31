@@ -10,7 +10,6 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using GISEye.Core;
 using GISEye.PredefinedUI.Abstractions;
 using GISEye.PredefinedUI.Panels;
-using GISEye.Resources.Models;
 using GISEye.ValueTypes;
 using LiveChartsCore;
 using LiveChartsCore.Kernel.Sketches;

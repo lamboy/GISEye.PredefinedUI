@@ -8,7 +8,6 @@ using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using GISEye.PredefinedUI.Abstractions;
-using GISEye.Resources.Models;
 
 namespace GISEye.PredefinedUI.Panels;
 
@@ -49,7 +48,7 @@ public abstract partial class CustomPanelViewModelBase : ObservableObject, ITool
     public bool IsRunning => Session.IsRunning;
 
     /// <summary>工具已完成且存在输出参数。</summary>
-    public bool HasResult => Session.Status >= RuntimeStatus.Completed && Outputs.Any();
+    public bool HasResult => Session.Status >= PanelSessionStatus.Completed && Outputs.Any();
 
     protected CustomPanelViewModelBase(IPanelSession session)
     {

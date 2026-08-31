@@ -1,6 +1,4 @@
 using System.ComponentModel;
-using GISEye.Core;
-using GISEye.Resources.Models;
 
 namespace GISEye.PredefinedUI.Abstractions;
 
@@ -9,8 +7,8 @@ namespace GISEye.PredefinedUI.Abstractions;
 /// PredefinedUI 中的面板基类通过此接口访问会话状态，避免直接依赖 GISEye 具体类型。
 /// </summary>
 /// <remarks>
-/// <see cref="Status"/> 是 protobuf 生成的 <see cref="GISEye.Resources.Models.RuntimeStatus"/> 枚举；
-/// PredefinedUI 已引用 GISEye.Resources，可直接做枚举比较。
+/// <see cref="Status"/> 是 <see cref="PanelSessionStatus"/> 枚举（与 protobuf 生成的
+/// <c>RuntimeStatus</c> 数值一一对应，通过 cast 互通）。
 /// </remarks>
 public interface IPanelSession : INotifyPropertyChanged
 {
@@ -21,7 +19,7 @@ public interface IPanelSession : INotifyPropertyChanged
     IPanelItem ToolInfo { get; }
 
     /// <summary>当前运行状态。</summary>
-    RuntimeStatus Status { get; }
+    PanelSessionStatus Status { get; }
 
     /// <summary>状态描述文本。</summary>
     string? StatusText { get; }

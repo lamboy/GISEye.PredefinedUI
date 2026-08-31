@@ -26,7 +26,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\GISEye.Core\GISEye.Core.csproj" />
-    <ProjectReference Include="..\GISEye.Resources\GISEye.Resources.csproj" />
   </ItemGroup>
 
 </Project>
