@@ -1,0 +1,158 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:lvc="using:LiveChartsCore.SkiaSharpView.Avalonia"
+             mc:Ignorable="d" d:DesignWidth="640" d:DesignHeight="420"
+             x:Class="GISEye.PredefinedUI.Panels.Mortgage.MortgagePanelView"
+             xmlns:vm="using:GISEye.PredefinedUI.Panels.Mortgage"
+             x:DataType="vm:MortgagePanelViewModel">
+
+    <Design.DataContext>
+        <vm:MortgagePanelViewModel />
+    </Design.DataContext>
+
+    <UserControl.Resources>
+        <SolidColorBrush x:Key="FieldLabelBrush" Color="#FF606060"/>
+        <SolidColorBrush x:Key="PrincipalBrush" Color="#FFE68A00"/>
+    </UserControl.Resources>
+
+    <UserControl.Styles>
+        <Style Selector="TextBlock.field-label">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Foreground" Value="{StaticResource FieldLabelBrush}"/>
+        </Style>
+    </UserControl.Styles>
+
+    <StackPanel Spacing="14">
+
+        <!-- 标题 -->
+        <Border Background="{Binding AccentBrush}" Padding="16,12" CornerRadius="6">
+            <StackPanel Spacing="2">
+                <TextBlock Text="{Binding DisplayName}"
+                            FontSize="18" FontWeight="Bold" Foreground="White"/>
+                <TextBlock Text="{Binding Description}"
+                            FontSize="12" Foreground="White" Opacity="0.85"
+                            TextWrapping="Wrap"
+                            IsVisible="{Binding Description, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+            </StackPanel>
+        </Border>
+
+        <!-- 结果摘要（自动运行后填充） -->
+        <Border CornerRadius="6" Padding="16,12">
+            <StackPanel Spacing="10">
+                <!-- 大字月供 -->
+                <StackPanel>
+                    <TextBlock Text="月供（每期）" FontSize="11" Opacity="0.6"/>
+                    <StackPanel Orientation="Horizontal" Spacing="4" Margin="0,2,0,0">
+                        <TextBlock Text="¥" FontSize="14" Opacity="0.7" VerticalAlignment="Bottom" Margin="0,0,0,4"/>
+                        <TextBlock Text="{Binding OutPayment, StringFormat=\{0:F2\}}"
+                                    FontSize="30" FontWeight="Bold" Foreground="{Binding AccentBrush}"/>
+                    </StackPanel>
+                </StackPanel>
+
+                <!-- 成本明细 -->
+                <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto">
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="总利息" Classes="field-label"/>
+                    <TextBlock Grid.Row="0" Grid.Column="1"
+                                Text="{Binding OutInterest, StringFormat=\{0:F2\}}"
+                                FontWeight="SemiBold"/>
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="总还款额" Classes="field-label" Margin="0,2,0,0"/>
+                    <TextBlock Grid.Row="1" Grid.Column="1"
+                                Text="{Binding OutTotal, StringFormat=\{0:F2\}}"
+                                FontWeight="SemiBold" Margin="0,2,0,0"/>
+                </Grid>
+
+                <!-- 本金/利息构成条（两个 ProgressBar 堆叠：外层本金=100%，内层利息覆盖） -->
+                <StackPanel Spacing="4" Margin="0,6,0,0">
+                    <Grid Height="10">
+                        <ProgressBar Value="100"
+                                        Foreground="{Binding AccentBrush}"
+                                        Background="Transparent"
+                                        IsHitTestVisible="False"
+                                        MinHeight="10"/>
+                        <ProgressBar Value="{Binding PrincipalPercent}"
+                                        Foreground="{StaticResource PrincipalBrush}"
+                                        Background="Transparent"
+                                        IsHitTestVisible="False"
+                                        MinHeight="10"/>
+                    </Grid>
+                    <Grid ColumnDefinitions="*,*">
+                        <TextBlock Grid.Column="0" Text="{Binding PrincipalLabel}" FontSize="11" Opacity="0.75"/>
+                        <TextBlock Grid.Column="1" Text="{Binding InterestLabel}" FontSize="11" Opacity="0.75"
+                                    HorizontalAlignment="Right"/>
+                    </Grid>
+                </StackPanel>
+
+                <!-- 备选方案提示 -->
+                <!--<Border Background="#1AE68A00" CornerRadius="4" Padding="8,6"
+                        IsVisible="{Binding HasPositiveSavings}"
+                        Margin="0,4,0,0">
+                    <TextBlock Text="{Binding AlternativeMethodLabel}" FontSize="12" Foreground="{StaticResource PrincipalBrush}"/>
+                </Border>-->
+            </StackPanel>
+        </Border>
+
+        <!-- 还款计划趋势图（LiveCharts 折线图） -->
+        <Border CornerRadius="6" Padding="16,12">
+            <StackPanel Spacing="6">
+                <TextBlock Text="{Binding ChartTitle}" FontWeight="SemiBold" FontSize="13"/>
+                <lvc:CartesianChart
+                    Series="{Binding Series}"
+                    XAxes="{Binding XAxes}"
+                    YAxes="{Binding YAxes}"
+                    Height="220"
+                    LegendPosition="Bottom"
+                    ZoomMode="X"/>
+            </StackPanel>
+        </Border>
+
+        <!-- 输入参数区 -->
+        <Border CornerRadius="6" Padding="16,12">
+            <StackPanel Spacing="6">
+                <TextBlock Text="输入参数" FontWeight="SemiBold" FontSize="13"/>
+                <Grid ColumnDefinitions="130,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto" RowSpacing="8">
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="贷款本金（元）" Classes="field-label"/>
+                    <NumericUpDown Grid.Row="0" Grid.Column="1"
+                                    Value="{Binding Principal, Mode=TwoWay}"
+                                    Minimum="0" FormatString="F2"
+                                    HorizontalAlignment="Stretch"/>
+
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="年利率（%）" Classes="field-label"/>
+                    <NumericUpDown Grid.Row="1" Grid.Column="1"
+                                    Value="{Binding AnnualRate, Mode=TwoWay}"
+                                    Minimum="0" FormatString="F2"
+                                    HorizontalAlignment="Stretch"/>
+
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="还款期数（月）" Classes="field-label"/>
+                    <NumericUpDown Grid.Row="2" Grid.Column="1"
+                                    Value="{Binding Months, Mode=TwoWay}"
+                                    Minimum="1" Increment="12"
+                                    HorizontalAlignment="Stretch"/>
+
+                    <TextBlock Grid.Row="3" Grid.Column="0" Text="还款方式" Classes="field-label"/>
+                    <ComboBox Grid.Row="3" Grid.Column="1"
+                                ItemsSource="{Binding MethodOptions}"
+                                SelectedItem="{Binding Method, Mode=TwoWay}"
+                                HorizontalAlignment="Stretch"/>
+
+                    <TextBlock Grid.Row="4" Grid.Column="0" Text="还款频率" Classes="field-label"/>
+                    <ComboBox Grid.Row="4" Grid.Column="1"
+                                ItemsSource="{Binding FrequencyOptions}"
+                                SelectedItem="{Binding Frequency, Mode=TwoWay}"
+                                HorizontalAlignment="Stretch"/>
+                </Grid>
+            </StackPanel>
+        </Border>
+
+        <!-- 计算状态（计算中提示） -->
+        <Border CornerRadius="6" Padding="16,12">
+            <StackPanel Spacing="4" IsVisible="{Binding IsExecuting}">
+                <ProgressBar Value="{Binding ProgressPercentage}" Height="4"/>
+                <TextBlock Text="{Binding StatusText}" FontSize="12" Opacity="0.7"/>
+            </StackPanel>
+        </Border>
+
+    </StackPanel>
+
+</UserControl>
