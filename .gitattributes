@@ -1,0 +1,17 @@
+# 设置默认行为，以防有人没有设置 core.autocrlf
+* text=auto
+
+# 强制以下类型文件在检出时始终使用 CRLF 换行符
+*.cs          text eol=crlf
+*.csproj      text eol=crlf
+*.sln         text eol=crlf
+*.slnx        text eol=crlf
+*.slnf        text eol=crlf
+*.xaml        text eol=crlf
+*.json        text eol=crlf
+*.xml         text eol=crlf
+
+# 标记二进制文件，防止 Git 修改它们
+*.png         binary
+*.jpg         binary
+*.ico         binary
