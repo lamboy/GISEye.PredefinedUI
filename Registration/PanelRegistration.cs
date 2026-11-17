@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Microsoft.Extensions.DependencyInjection;
 using GISEye.Core;
@@ -58,7 +58,14 @@ public static class PanelRegistration
         _factories[(key, value)] = factory;
     }
 
-    /// <summary>按 hint 查表，返回对应面板 VM；未命中 → null（调用方走默认两阶段流程）。</summary>
+    /// <summary>
+    /// 是否存在该 hint 对应的面板工厂。
+    /// 供界面决定是否显示"自定义面板"入口（工具声明了 hint 但没有 Provider 时不显示）。
+    /// </summary>
+    public static bool HasPanel(string key, string value)
+        => !string.IsNullOrEmpty(value) && _factories.ContainsKey((key, value));
+
+    /// <summary>按 hint 查表，返回对应面板 VM；未命中 → null（调用方自行决定提示或退回默认流程）。</summary>
     public static IPanelViewModelBase? CreatePanel(
         string key,
         string value,
