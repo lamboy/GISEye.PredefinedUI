@@ -1,0 +1,19 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:GISEye.PredefinedUI.Panels.Mortgage"
+             xmlns:views="using:GISEye.PredefinedUI.Panels.Mortgage"
+             x:Class="GISEye.PredefinedUI.Demo.App"
+             RequestedThemeVariant="Default">
+
+    <Application.DataTemplates>
+        <!-- GISEye 宿主里由 ViewLocator / VM→View 映射完成；Demo 直接用 DataTemplate。 -->
+        <DataTemplate DataType="{x:Type vm:MortgagePanelViewModel}">
+            <views:MortgagePanelView />
+        </DataTemplate>
+    </Application.DataTemplates>
+
+    <Application.Styles>
+        <FluentTheme />
+    </Application.Styles>
+
+</Application>

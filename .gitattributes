@@ -15,3 +15,7 @@
 *.png         binary
 *.jpg         binary
 *.ico         binary
+
+# 独立 Demo / 测试工程不随子树同步进入 GISEye（sync-subtree 使用 git archive，遵守 export-ignore）
+samples/      export-ignore
+tests/        export-ignore

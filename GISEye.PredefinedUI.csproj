@@ -24,6 +24,14 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.0" />
   </ItemGroup>
 
+  <!-- samples\ 下是独立 Demo 工程，SDK / Avalonia 的默认通配会递归包含其源码与 XAML，需显式排除。 -->
+  <ItemGroup>
+    <Compile Remove="samples\**" />
+    <AvaloniaXaml Remove="samples\**" />
+    <AvaloniaResource Remove="samples\**" />
+    <None Remove="samples\**" />
+  </ItemGroup>
+
   <!--
     GISEye.Core 引用解析（按优先级）：
     1. 被 GISEye 子树同步复制进 src/GISEye.PredefinedUI 时，Core 是兄弟项目（CI 路径，保持不变）；

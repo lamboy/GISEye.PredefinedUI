@@ -1,0 +1,89 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:panels="using:GISEye.PredefinedUI.Panels"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="GISEye.PredefinedUI.Demo.MainWindow"
+        Title="GISEye.PredefinedUI Demo"
+        WindowStartupLocation="CenterScreen">
+
+    <Window.Styles>
+        <!-- 浮动演示工具条：参考通用调试工具栏（深色胶囊 + 图标按钮）。 -->
+        <Style Selector="Button.demo-toolbar">
+            <Setter Property="Width" Value="34"/>
+            <Setter Property="Height" Value="30"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Foreground" Value="#FFFFFFFF"/>
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+        <Style Selector="Button.demo-toolbar:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="#33FFFFFF"/>
+        </Style>
+        <Style Selector="Button.demo-toolbar:pressed /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="#55FFFFFF"/>
+        </Style>
+    </Window.Styles>
+
+    <Panel>
+        <ScrollViewer>
+            <ContentControl x:Name="PanelHost" Margin="24"/>
+        </ScrollViewer>
+
+        <Border x:Name="DemoToolbar"
+                HorizontalAlignment="Center" VerticalAlignment="Top"
+                Margin="0,14,0,0"
+                Padding="6,4"
+                Background="#E6222222"
+                BorderBrush="#33FFFFFF" BorderThickness="1"
+                CornerRadius="10"
+                BoxShadow="0 4 16 0 #55000000">
+            <StackPanel Orientation="Horizontal" Spacing="2" VerticalAlignment="Center">
+                <TextBlock Text="模式" Foreground="#B3FFFFFF" FontSize="12"
+                           VerticalAlignment="Center" Margin="4,0,4,0"/>
+                <ComboBox x:Name="DemoSourceSelector" MinWidth="140" Height="30"
+                          VerticalAlignment="Center" Margin="0,0,4,0"
+                          Background="#33FFFFFF" BorderBrush="#33FFFFFF"
+                          Foreground="#FFFFFFFF">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate x:DataType="panels:PanelDemoProvider">
+                            <TextBlock Text="{Binding Name}"/>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+
+                <Border Width="1" Height="18" Background="#33FFFFFF" Margin="2,0,6,0"/>
+
+                <Button x:Name="FirstButton" Classes="demo-toolbar" Click="OnFirstClick"
+                        ToolTip.Tip="跳到第一组">
+                    <PathIcon Width="14" Height="14"
+                              Data="M4,5 L6,5 L6,19 L4,19 Z M20,5 L8,12 L20,19 Z"/>
+                </Button>
+                <Button x:Name="PreviousButton" Classes="demo-toolbar" Click="OnPreviousClick"
+                        ToolTip.Tip="上一组">
+                    <PathIcon Width="14" Height="14" Data="M14,5 L4,12 L14,19 Z"/>
+                </Button>
+                <Button x:Name="AutoButton" Classes="demo-toolbar" Click="OnAutoClick"
+                        ToolTip.Tip="开始自动演示">
+                    <PathIcon x:Name="AutoIcon" Width="14" Height="14" Data="M7,4 L19,12 L7,20 Z"/>
+                </Button>
+                <Button x:Name="NextButton" Classes="demo-toolbar" Click="OnNextClick"
+                        ToolTip.Tip="下一组">
+                    <PathIcon Width="14" Height="14" Data="M10,5 L20,12 L10,19 Z"/>
+                </Button>
+
+                <Border Width="1" Height="18" Background="#33FFFFFF" Margin="6,0"/>
+
+                <TextBlock x:Name="CaseCounter" Text="- / -"
+                           Foreground="#FFFFFFFF" FontWeight="SemiBold"
+                           VerticalAlignment="Center"
+                           MinWidth="54" TextAlignment="Center"/>
+            </StackPanel>
+        </Border>
+    </Panel>
+
+</Window>

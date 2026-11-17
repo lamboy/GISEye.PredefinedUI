@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Microsoft.Extensions.DependencyInjection;
 using GISEye.Core;
 using GISEye.PredefinedUI.Abstractions;
+using GISEye.PredefinedUI.Panels;
 using GISEye.PredefinedUI.Panels.Mortgage;
 
 namespace GISEye.PredefinedUI.Registration;
@@ -25,6 +26,9 @@ public static class PanelRegistration
     private static readonly Dictionary<(string Key, string Value),
         Func<IPanelSession, IReadOnlyDictionary<string, string>, IPanelViewModelBase?>> _factories = new();
 
+    // 演示来源表：(HintKey, HintValue) → 多个演示来源（静态用例 / 真实算法等），供 Demo 宿主切换。
+    private static readonly Dictionary<(string Key, string Value), IReadOnlyList<PanelDemoProvider>> _demoProviders = new();
+
     // VM → View 映射（仅 PredefinedUI 注册的面板）。
     private static readonly Dictionary<Type, Type> _viewModelToViewMapping = new();
 
@@ -45,17 +49,44 @@ public static class PanelRegistration
         RegisterProvider(
             ToolUIHints.PanelHint,
             "mortgage",
-            (session, hints) => new MortgagePanelViewModel(session, hints));
+            (session, hints) => new MortgagePanelViewModel(session, hints),
+            demos: new[]
+            {
+                new PanelDemoProvider("演示用例（静态）", MortgageCaseDemo.CreateSession),
+                new PanelDemoProvider("真实算法", MortgageAlgorithmDemo.CreateSession),
+            });
     }
 
-    /// <summary>注册单个面板工厂；插件扩展点。</summary>
+    /// <summary>
+    /// 注册单个面板工厂；插件扩展点。
+    /// </summary>
+    /// <param name="demos">
+    /// 可选的演示来源列表（通常由面板同目录的 <c>XxxPanelDemo.cs</c> 提供），
+    /// Demo 宿主可经 <see cref="GetDemoProviders"/> 枚举切换“静态用例 / 真实算法”等模式。
+    /// </param>
     public static void RegisterProvider(
         string key,
         string value,
-        Func<IPanelSession, IReadOnlyDictionary<string, string>, IPanelViewModelBase?> factory)
+        Func<IPanelSession, IReadOnlyDictionary<string, string>, IPanelViewModelBase?> factory,
+        IReadOnlyList<PanelDemoProvider>? demos = null)
     {
         if (factory == null) throw new ArgumentNullException(nameof(factory));
         _factories[(key, value)] = factory;
+        if (demos is { Count: > 0 })
+            _demoProviders[(key, value)] = demos;
+    }
+
+    /// <summary>取该 hint 注册的演示来源列表；未注册 → 空列表。</summary>
+    public static IReadOnlyList<PanelDemoProvider> GetDemoProviders(string key, string value)
+        => _demoProviders.TryGetValue((key, value), out var demos)
+            ? demos
+            : Array.Empty<PanelDemoProvider>();
+
+    /// <summary>创建该 hint 的默认演示会话（列表首个来源）；未注册 → null。</summary>
+    public static IPanelSession? CreateDemoSession(string key, string value)
+    {
+        IReadOnlyList<PanelDemoProvider> demos = GetDemoProviders(key, value);
+        return demos.Count > 0 ? demos[0].CreateSession() : null;
     }
 
     /// <summary>
